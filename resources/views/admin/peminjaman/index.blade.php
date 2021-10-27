@@ -88,7 +88,7 @@
                             <td>
 
                                 @can('peminjaman_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $peminjaman->id) }}">
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $peminjaman->id) }}" style="display: {{ $peminjaman->status == 1 ? 'none' : '' }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
