@@ -62,9 +62,9 @@
                         <th>
                             Status Pengembalian
                         </th>
-                        <th>
+                        <!-- <th>
                             Admin
-                        </th>
+                        </th> -->
                         
                         <th>
                             Aksi
@@ -72,63 +72,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($peminjamans as $key => $peminjaman)
-                        <tr data-entry-id="{{ $peminjaman->id }}">
-                            <td>
-
-                            </td>
-                            <td>
-                                {{ $peminjaman->nama ?? '' }}
-                            </td>
-                            <td>
-                                {{ $peminjaman->email ?? '' }}
-                            </td>
-                            <td>
-                                {{ $peminjaman->barang_pinjam ?? '' }}
-                            </td>
-                            <td>
-                                {{ $peminjaman->tanggal_pinjam ?? '' }}
-                            </td>
-                            <td>
-                                {{ $peminjaman->tanggal_kembali ?? '-' }}
-                            </td>
-                            <td>
-                                {{ $peminjaman->status == 1 ? 'Sudah dikembalikan' : 'Belum dikembalikan'}}
-                            </td>
-                            <td>
-                                {{ $admin[$key] ?? '' }}
-                            </td>
-                            <td>
-
-                                @can('peminjaman_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.show', $peminjaman->id) }}">
-                                        {{ trans('global.show') }}
-                                    </a>
-                                @endcan
-
-                                @can('peminjaman_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $peminjaman->id) }}" style="display: {{ $peminjaman->status == 1 ? 'none' : '' }}">
-                                        {{ trans('global.edit') }}
-                                    </a>
-                                @endcan
-
-                                @can('peminjaman_pengembalian')
-                                    <a class="btn btn-xs btn-warning" href="{{ route('admin.peminjaman.pengembalian', $peminjaman->id) }}" style="display: {{ $peminjaman->tanggal_kembali != NULL ? 'none' : '' }}">
-                                        Pengembalian
-                                    </a>
-                                @endcan
-
-                                @can('peminjaman_delete')
-                                    <form action="{{ route('admin.peminjaman.destroy', $peminjaman->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                    </form>
-                                @endcan
-                            </td>
-
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -145,6 +88,21 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <script>
+    var table = $('.data-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('admin.peminjaman.index') }}",
+        columns: [
+            {data: 'id', name: 'id'},
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'barang_pinjam', name: 'barang_pinjam'},
+            {data: 'tanggal_pinjam', name: 'tanggal_pinjam'},
+            {data: 'tanggal_kembali', name: 'tanggal_kembali'},
+            {data: 'status', name: 'status'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+    });
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 @can('peminjaman_delete')

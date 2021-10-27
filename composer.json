@@ -19,7 +19,7 @@
         "laravel/ui": "^3.0",
         "sopamo/laravel-filepond": "^0.6.1",
         "spatie/laravel-medialibrary": "^8.7",
-        "yajra/laravel-datatables-oracle": "^9.6"
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
