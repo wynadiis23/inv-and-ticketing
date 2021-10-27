@@ -104,6 +104,11 @@ class PeminjamanController extends Controller
     public function show($id)
     {
         //
+        //
+        abort_if(Gate::denies('peminjaman_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $peminjaman = Peminjaman::findorFail($id);
+        return view('admin.peminjaman.show', compact('peminjaman'));
     }
 
     /**
