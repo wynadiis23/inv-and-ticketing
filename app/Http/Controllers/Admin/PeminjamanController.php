@@ -29,6 +29,7 @@ class PeminjamanController extends Controller
         //
         abort_if(Gate::denies('peminjaman_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $admins = User::all();
         $peminjamans = Peminjaman::all();
         //get admin name yang input peminjaman
         foreach($peminjamans as $peminjaman)
@@ -36,7 +37,7 @@ class PeminjamanController extends Controller
             $admin[] = User::findOrFail($peminjaman->user_id)->name;
         }
         // dd($admin[0]);
-        return view('admin.peminjaman.index', compact('peminjamans', 'admin'));
+        return view('admin.peminjaman.index', compact('peminjamans', 'admin', 'admins'));
         // return "mamang";
     }
 
@@ -179,6 +180,7 @@ class PeminjamanController extends Controller
 
     public function rangeReport(Request $request)
     {
+        $admins = User::all();
         //INISIASI 30 HARI RANGE SAAT INI JIKA HALAMAN PERTAMA KALI DI-LOAD
         //KITA GUNAKAN STARTOFMONTH UNTUK MENGAMBIL TANGGAL 1
         $start = Carbon::now()->startOfMonth()->format('Y-m-d');
@@ -186,17 +188,19 @@ class PeminjamanController extends Controller
         $end = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         //JIKA USER MELAKUKAN FILTER MANUAL, MAKA PARAMETER DATE AKAN TERISI
+        // dd($request->all());
         if (request()->date != '') {
             //MAKA FORMATTING TANGGALNYA BERDASARKAN FILTER USER
             $date = explode(' - ' ,request()->date);
             $start = Carbon::parse($date[0])->format('Y-m-d');
             $end = Carbon::parse($date[1])->format('Y-m-d');
+            // dd($end);
         }
 
         //BUAT QUERY KE DB MENGGUNAKAN WHEREBETWEEN DARI TANGGAL FILTER
         $peminjamans = Peminjaman::whereBetween('tanggal_pinjam', [$start, $end])->get();
         // dd($peminjamans[0]);
-        return view('admin.peminjaman.index', compact('peminjamans'));
+        return view('admin.peminjaman.index', compact('peminjamans', 'admins'));
     }
 
     public function pengembalian($id)
