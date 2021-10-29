@@ -17,13 +17,26 @@
     <div class="card-body">
         <div class="table-responsive">
         <!-- FORM UNTUK FILTER BERDASARKAN DATE RANGE -->
-            <form action="{{ route('admin.peminjaman.rangeReport') }}" method="get">
+            <form action="{{ route('admin.peminjaman.rangeReport') }}" method="get">    
                 <div class="input-group mb-3 col-md-3 float-right">
-                    <input type="text" id="created_at" name="date" class="form-control">
-                    <div class="input-group-append">
                         <button class="btn btn-secondary" type="submit">Filter</button>
-                    </div>
                 </div>
+                <div class="input-group mb-3 col-md-3 float-right">
+                    <!-- <input type="text" id="created_at" name="date" class="form-control"> -->
+                    <input type="text" id="created_at" name="date" value="" class="form-control" />
+                </div>
+                <div class="input-group mb-3 col-md-3 float-right">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="admin_select">Admin</label>
+                        </div>
+                        <!-- <select class="custom-select" id="admin_select" name="admin_select"> -->
+                            <!-- <option selected>Choose...</option>
+                            @foreach($admins as $key => $admin)
+                                <option value="{{ $admin->id }}">{{ $admin->name }}</option>
+                            @endforeach
+                        </select> -->
+                </div>
+                
             </form>
             <table class=" table table-bordered table-striped table-hover datatable datatable-peminjaman">
                 <thead>
@@ -88,7 +101,13 @@
                             <td>
 
                                 @can('peminjaman_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $peminjaman->id) }}">
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.show', $peminjaman->id) }}">
+                                        {{ trans('global.show') }}
+                                    </a>
+                                @endcan
+
+                                @can('peminjaman_edit')
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $peminjaman->id) }}" style="display: {{ $peminjaman->status == 1 ? 'none' : '' }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
@@ -169,6 +188,7 @@
     });
 })
 $(document).ready(function() {
+    
     let start = moment().startOf('month')
     let end = moment().endOf('month')
 
@@ -177,6 +197,24 @@ $(document).ready(function() {
         startDate: start,
         endDate: end
     })
+    
+    
+
+    
+    // $('input[name="date"]').daterangepicker({
+    //   autoUpdateInput: true,
+    //   locale: {
+    //       cancelLabel: 'Clear'
+    //   }
+    // });
+
+    // $('input[name="date"]').on('apply.daterangepicker', function(ev, picker) {
+    //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    // });
+
+    // $('input[name="date"]').on('cancel.daterangepicker', function(ev, picker) {
+    //     $(this).val('');
+    // });
 })
 
 </script>
