@@ -15,6 +15,7 @@ use Gate;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
+use DataTables;
 
 
 class PeminjamanController extends Controller
@@ -40,7 +41,8 @@ class PeminjamanController extends Controller
         // return view('admin.peminjaman.index', compact('peminjamans', 'admin', 'admins'));
         if ($request->ajax()) {
             $data = Peminjaman::select('*');
-            dd($data);
+            // $data[0]->nama="mamamama";
+            // dd($data);
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -50,6 +52,8 @@ class PeminjamanController extends Controller
                     ->rawColumns(['action'])
                     ->make(true);
 
+        } else {
+            // dd('mamang');   
         }
         return view('admin.peminjaman.index', compact('admins'));
         // return "mamang";
