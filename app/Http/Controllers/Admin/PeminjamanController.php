@@ -15,6 +15,7 @@ use Gate;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
+use DataTables;
 
 
 class PeminjamanController extends Controller
@@ -24,20 +25,37 @@ class PeminjamanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
         abort_if(Gate::denies('peminjaman_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $admins = User::all();
-        $peminjamans = Peminjaman::all();
-        //get admin name yang input peminjaman
-        foreach($peminjamans as $peminjaman)
-        {
-            $admin[] = User::findOrFail($peminjaman->user_id)->name;
+        // $peminjamans = Peminjaman::all();
+        // //get admin name yang input peminjaman
+        // foreach($peminjamans as $peminjaman)
+        // {
+        //     $admin[] = User::findOrFail($peminjaman->user_id)->name;
+        // }
+        // // dd($admin[0]);
+        // return view('admin.peminjaman.index', compact('peminjamans', 'admin', 'admins'));
+        if ($request->ajax()) {
+            $data = Peminjaman::select('*');
+            // $data[0]->nama="mamamama";
+            // dd($data);
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+                           $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+
+        } else {
+            // dd('mamang');   
         }
-        // dd($admin[0]);
-        return view('admin.peminjaman.index', compact('peminjamans', 'admin', 'admins'));
+        return view('admin.peminjaman.index', compact('admins'));
         // return "mamang";
     }
 
