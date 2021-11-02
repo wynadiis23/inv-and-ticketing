@@ -45,10 +45,18 @@ class PeminjamanController extends Controller
             // dd($data);
             return Datatables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('admin', function(Peminjaman $peminjaman) {
+                        $admin = User::findOrFail($peminjaman->user_id)->name;
+                        return $admin;
+                    })
                     ->addColumn('action', function($row){
                            $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
                             return $btn;
                     })
+                    ->setRowData([
+                        'tanggal_kembali' => '{{ $tanggal_kembali == null ? "-" : $tanggal_kembali}}',
+                        'status' => '{{ $status == 0 ? "belum dikembalikan" : "sudah dikembalikan" }}',
+                    ])
                     ->rawColumns(['action'])
                     ->make(true);
 
