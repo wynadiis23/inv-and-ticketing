@@ -28,6 +28,7 @@ class PeminjamanController extends Controller
     public function index(Request $request)
     {
         //
+        $user = Auth()->user();
         abort_if(Gate::denies('peminjaman_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $admins = User::all();
@@ -50,8 +51,10 @@ class PeminjamanController extends Controller
                         return $admin;
                     })
                     ->addColumn('action', function($row){
-                           $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
-                            return $btn;
+                        //    $btn = '<a href="peminjaman/'.$row->id.'/edit" class="edit btn btn-primary btn-sm">Edit</a>';
+                        //    $btn = $btn. '<a href="peminjaman/'.$row->id.'/edit" class="edit btn btn-secondary btn-sm">Edit</a>';
+                        //     return $btn;
+                        return view('admin.peminjaman.actions', compact('row'));
                     })
                     ->setRowData([
                         'tanggal_kembali' => '{{ $tanggal_kembali == null ? "-" : $tanggal_kembali}}',
