@@ -40,8 +40,16 @@ class PeminjamanController extends Controller
         // }
         // // dd($admin[0]);
         // return view('admin.peminjaman.index', compact('peminjamans', 'admin', 'admins'));
+        
         if ($request->ajax()) {
-            $data = Peminjaman::select('*');
+            // dd($request->all());
+            if(!empty($request->from_date)) {
+                $data = Peminjaman::select('*')
+                    ->whereBetween('tanggal_pinjam', array($request->from_date, $request->to_date))
+                    ->get();
+            } else {
+                $data = Peminjaman::select('*');
+            }
             // $data[0]->nama="mamamama";
             // dd($data);
             return Datatables::of($data)

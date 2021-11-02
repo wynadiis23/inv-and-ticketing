@@ -11,21 +11,38 @@
 @endcan
 <div class="card">
     <div class="card-header">
-        {{ trans('global.list') }}
+        List Peminjaman Inventory
     </div>
 
     <div class="card-body">
         <div class="table-responsive">
         <!-- FORM UNTUK FILTER BERDASARKAN DATE RANGE -->
-            <form action="{{ route('admin.peminjaman.rangeReport') }}" method="get">
+            <div class="row input-daterange">
+                <div class="input-group col-md-4">
+                    <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date" readonly />
+                </div>
+                <div class="input-group col-md-4">
+                    <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date" readonly />
+                </div>
+                <div class="input-group col-md-4">
+                    <div class="col-md-2">
+                        <button type="button" name="filter" id="filter" class="btn btn-primary">Filter</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" name="refresh" id="refresh" class="btn btn-default">Refresh</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- <form action="{{ route('admin.peminjaman.rangeReport') }}" method="get">
                 <div class="input-group mb-3 col-md-3 float-right">
                     <button class="btn btn-secondary" type="submit">Filter</button>
                     <button class="btn btn-primary" type="submit">Refresh</button>
                 </div>    
-                <div class="input-group mb-3 col-md-3 float-right">
+                <div class="input-group mb-3 col-md-3 float-right"> -->
                     <!-- <input type="text" id="created_at" name="date" class="form-control"> -->
-                    <input type="text" id="created_at" name="date" value="" class="form-control" />
-                </div>
+                    <!-- <input type="text" id="created_at" name="date" value="" class="form-control" />
+                </div> -->
                 
                 <!-- <div class="input-group mb-3 col-md-3 float-right">
                         <div class="input-group-prepend">
@@ -39,7 +56,7 @@
                         </select> -->
                 <!-- </div> -->
                 
-            </form>
+            <!-- </form> -->
             <table class=" table table-bordered table-striped table-hover datatable datatable-peminjaman">
                 <thead>
                     <tr>
@@ -84,41 +101,65 @@
 @endsection
 @section('scripts')
 @parent
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script> -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->
 
 <script>
     $(function () {
+        $('.input-daterange').datepicker({
+            todayBtn:'linked',
+            format:'yyyy-mm-dd',
+            autoclose:true
+        });
 
-        //daterange picker
-        let start = moment().startOf('month')
-        let end = moment().endOf('month')
+        load_data();
 
-        //INISIASI DATERANGEPICKER
-        $('#created_at').daterangepicker({
+        function load_data(from_date = '', to_date = ''){
+                    //datatable ajax
+            var table = $('.datatable-peminjaman').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('admin.peminjaman.index') }}',
+                    data: {from_date:from_date, to_date:to_date},
+                },
+                columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'nama', name: 'nama'},
+                    {data: 'email', name: 'email'},
+                    {data: 'barang_pinjam', name: 'barang_pinjam'},
+                    {data: 'tanggal_pinjam', name: 'tanggal_pinjam'},
+                    {data: 'DT_RowData.tanggal_kembali', name: 'tanggal_kembali'},
+                    {data: 'DT_RowData.status', name: 'status'},
+                    {data: 'admin', name: 'admin'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
+            });
+        }
 
-            startDate: start,
-            endDate: end
-        })
+        $('#filter').click(function(){
+            var from_date = $('#from_date').val();
+            var to_date = $('#to_date').val();
+            if(from_date != '' &&  to_date != '')
+            {
+                $('.datatable-peminjaman').DataTable().destroy();
+                load_data(from_date, to_date);
+            }
+            else
+            {
+                alert('Both Date is required');
+            }
+        });
 
-        //datatable ajax
-        var table = $('.datatable-peminjaman').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('admin.peminjaman.index') }}",
-            columns: [
-                {data: 'id', name: 'id'},
-                {data: 'nama', name: 'nama'},
-                {data: 'email', name: 'email'},
-                {data: 'barang_pinjam', name: 'barang_pinjam'},
-                {data: 'tanggal_pinjam', name: 'tanggal_pinjam'},
-                {data: 'DT_RowData.tanggal_kembali', name: 'tanggal_kembali'},
-                {data: 'DT_RowData.status', name: 'status'},
-                {data: 'admin', name: 'admin'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+        $('#refresh').click(function(){
+            $('#from_date').val('');
+            $('#to_date').val('');
+            $('.datatable-peminjaman').DataTable().destroy();
+            load_data();
         });
 
 //   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
@@ -162,7 +203,7 @@
 //             .columns.adjust();
 //     });
 })
-$(document).ready(function() {
+// $(document).ready(function() {
     
     
     
@@ -183,7 +224,7 @@ $(document).ready(function() {
     // $('input[name="date"]').on('cancel.daterangepicker', function(ev, picker) {
     //     $(this).val('');
     // });
-})
+// })
 
 </script>
 @endsection
