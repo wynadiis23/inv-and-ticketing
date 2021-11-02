@@ -64,9 +64,9 @@
                         <th>
                             Status Pengembalian
                         </th>
-                        <!-- <th>
+                        <th>
                             Admin
-                        </th> -->
+                        </th>
                         
                         <th>
                             Aksi
@@ -114,8 +114,9 @@
                 {data: 'email', name: 'email'},
                 {data: 'barang_pinjam', name: 'barang_pinjam'},
                 {data: 'tanggal_pinjam', name: 'tanggal_pinjam'},
-                {data: 'tanggal_kembali', name: 'tanggal_kembali'},
-                {data: 'status', name: 'status'},
+                {data: 'DT_RowData.tanggal_kembali', name: 'tanggal_kembali'},
+                {data: 'DT_RowData.status', name: 'status'},
+                {data: 'admin', name: 'admin'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
