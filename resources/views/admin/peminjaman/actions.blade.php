@@ -2,6 +2,9 @@
     <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.edit', $row->id) }}">
         {{ trans('global.edit') }}
     </a>
+    <a class="btn btn-xs btn-info" href="{{ route('admin.peminjaman.show', $row->id) }}">
+        {{ trans('global.show') }}
+    </a>
 @endcan
 
 @can('peminjaman_pengembalian')
