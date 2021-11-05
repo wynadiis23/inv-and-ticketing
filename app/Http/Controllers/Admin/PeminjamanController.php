@@ -43,11 +43,18 @@ class PeminjamanController extends Controller
         
         if ($request->ajax()) {
             // dd($request->all());
-            if(!empty($request->from_date)) {
+            if(!empty($request->from_date) && $request->filter_status !== null) { //awal date 0 dan status ''
+                // dd('mamang');
                 $data = Peminjaman::select('*')
                     ->whereBetween('tanggal_pinjam', array($request->from_date, $request->to_date))
+                    ->where('status', '=', $request->filter_status)
                     ->get();
-            } else {
+            } else if(empty($request->from_date) && $request->filter_status !== null) { //date 0 status 0 atau 1
+                // dd($request->filter_status);
+                $data = Peminjaman::select('*')
+                    ->where('status', '=', $request->filter_status)
+                    ->get();
+            }else {
                 $data = Peminjaman::select('*');
             }
             // $data[0]->nama="mamamama";

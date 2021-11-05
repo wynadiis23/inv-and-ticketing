@@ -17,19 +17,38 @@
     <div class="card-body">
         <div class="table-responsive">
         <!-- FORM UNTUK FILTER BERDASARKAN DATE RANGE -->
-            <div class="row input-daterange">
-                <div class="input-group col-md-4">
-                    <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date" readonly />
-                </div>
-                <div class="input-group col-md-4">
-                    <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date" readonly />
-                </div>
-                <div class="input-group col-md-4">
-                    <div class="col-md-2">
-                        <button type="button" name="filter" id="filter" class="btn btn-primary">Filter</button>
+            <div class="container">
+                <div class="row">
+                    <div class="row input-daterange">
+                        <div class="col">
+                                <div class="input-group">
+                                    <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date" readonly />    
+                                </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date" readonly />
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="button" name="refresh" id="refresh" class="btn btn-default">Refresh</button>
+                    <div class="col">
+                        <div class="input-group col">
+                            <select id="filter_status" name="filter_status" class="form-control">
+                                <option value="" >All</option>
+                                <option value="0">Belum dikembalikan</option>
+                                <option value="1">Sudah dikembalikan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class=col>
+                        <div class="input-group">
+                            <div class="col-md-2">
+                                <button type="button" name="filter" id="filter" class="btn btn-primary">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" name="refresh" id="refresh" class="btn btn-default">Refresh</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,14 +137,14 @@
 
         load_data();
 
-        function load_data(from_date = '', to_date = ''){
+        function load_data(from_date = '', to_date = '', filter_status = ''){
                     //datatable ajax
             var table = $('.datatable-peminjaman').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: '{{ route('admin.peminjaman.index') }}',
-                    data: {from_date:from_date, to_date:to_date},
+                    data: {from_date:from_date, to_date:to_date, filter_status:filter_status},
                 },
                 columns: [
                     {data: 'id', name: 'id'},
@@ -142,22 +161,28 @@
         }
 
         $('#filter').click(function(){
+            var filter_status = $('#filter_status').val();
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             if(from_date != '' &&  to_date != '')
             {
+                alert(filter_status);
                 $('.datatable-peminjaman').DataTable().destroy();
-                load_data(from_date, to_date);
+                load_data(from_date, to_date, filter_status);
             }
             else
             {
-                alert('Both Date is required');
+                alert(filter_status);
+                // alert('Both Date is required');
+                $('.datatable-peminjaman').DataTable().destroy();
+                load_data(from_date, to_date, filter_status);
             }
         });
 
         $('#refresh').click(function(){
             $('#from_date').val('');
             $('#to_date').val('');
+            $('#filter_status').val('');
             $('.datatable-peminjaman').DataTable().destroy();
             load_data();
         });
