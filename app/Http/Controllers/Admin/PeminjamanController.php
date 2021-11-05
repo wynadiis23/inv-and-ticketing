@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
 use DataTables;
+use Illuminate\Support\Facades\DB;
 
 
 class PeminjamanController extends Controller
@@ -45,26 +46,33 @@ class PeminjamanController extends Controller
             // dd($request->all());
             if(!empty($request->from_date) && $request->filter_status !== null) { //awal date 0 dan status ''
                 // dd('mamang');
-                $data = Peminjaman::select('*')
-                    ->whereBetween('tanggal_pinjam', array($request->from_date, $request->to_date))
-                    ->where('status', '=', $request->filter_status)
-                    ->get();
+                // $data = Peminjaman::select('*')
+                //     ->whereBetween('tanggal_pinjam', array($request->from_date, $request->to_date))
+                //     ->where('status', '=', $request->filter_status)
+                //     ->get();
+                $data = DB::table('peminjaman')
+                            ->join('users', 'users.id', '=', 'peminjaman.user_id')
+                            ->whereBetween('tanggal_pinjam', array($request->from_date, $request->to_date))
+                            ->where('status', '=', $request->filter_status)
+                            ->select('peminjaman.*', 'users.name')
+                            ->get();
             } else if(empty($request->from_date) && $request->filter_status !== null) { //date 0 status 0 atau 1
                 // dd($request->filter_status);
-                $data = Peminjaman::select('*')
-                    ->where('status', '=', $request->filter_status)
-                    ->get();
+                $data = DB::table('peminjaman')
+                            ->join('users', 'users.id', '=', 'peminjaman.user_id')
+                            ->where('status', '=', $request->filter_status)
+                            ->select('peminjaman.*', 'users.name')
+                            ->get();
             }else {
-                $data = Peminjaman::select('*');
+                $data = DB::table('peminjaman')
+                            ->join('users', 'users.id', '=', 'peminjaman.user_id')
+                            ->select('peminjaman.*', 'users.name')
+                            ->get();
             }
             // $data[0]->nama="mamamama";
             // dd($data);
             return Datatables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('admin', function(Peminjaman $peminjaman) {
-                        $admin = User::findOrFail($peminjaman->user_id)->name;
-                        return $admin;
-                    })
                     ->addColumn('action', function($row){
                         //    $btn = '<a href="peminjaman/'.$row->id.'/edit" class="edit btn btn-primary btn-sm">Edit</a>';
                         //    $btn = $btn. '<a href="peminjaman/'.$row->id.'/edit" class="edit btn btn-secondary btn-sm">Edit</a>';

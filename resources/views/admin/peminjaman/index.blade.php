@@ -154,7 +154,7 @@
                     {data: 'tanggal_pinjam', name: 'tanggal_pinjam'},
                     {data: 'DT_RowData.tanggal_kembali', name: 'tanggal_kembali'},
                     {data: 'DT_RowData.status', name: 'status'},
-                    {data: 'admin', name: 'admin'},
+                    {data: 'name', name: 'name'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
